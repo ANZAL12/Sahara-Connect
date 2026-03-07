@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 
@@ -77,20 +78,24 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.1 }}
         >
-          <Button
-            size="lg"
-            className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300"
-          >
-            Join the Network
-          </Button>
+          <Link href="/batches/join">
+            <Button
+              size="lg"
+              className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300"
+            >
+              Join the Network
+            </Button>
+          </Link>
 
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-full backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
-          >
-            Explore Batches
-          </Button>
+          <Link href="/batches">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-full backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
+            >
+              Explore Batches
+            </Button>
+          </Link>
         </motion.div>
       </div>
 
