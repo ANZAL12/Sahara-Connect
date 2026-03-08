@@ -25,14 +25,41 @@ export default function BatchesManagement() {
 
     async function fetchBatches() {
         setLoading(true);
+        setError(null);
         try {
-            const { data, error } = await supabase
+            // First try to fetch from the explicit batches table
+            const { data: explicitBatches, error: explicitError } = await supabase
                 .from('batches')
                 .select('*')
                 .order('year', { ascending: false });
 
-            if (error) throw error;
-            setBatches(data || []);
+            // If it succeeds and we have batches, use them
+            if (!explicitError && explicitBatches && explicitBatches.length > 0) {
+                setBatches(explicitBatches);
+                return;
+            }
+
+            // IF batches table doesn't exist or is empty, fallback to discovering from members
+            const { data: members, error: membersError } = await supabase
+                .from('batch_members')
+                .select('batch');
+
+            if (membersError) throw membersError;
+
+            // Extract unique batch years and sort them
+            const uniqueYears = Array.from(new Set((members || []).map(m => m.batch))).sort().reverse();
+
+            const derivedBatches: Batch[] = uniqueYears.map(year => ({
+                year,
+                created_at: new Date().toISOString() // Mock date since it wasn't explicitly created
+            }));
+
+            setBatches(derivedBatches);
+            if (explicitError) {
+                // Optionally warn that we are in fallback mode
+                console.warn("Using fallback batches since 'batches' table failed:", explicitError.message);
+            }
+
         } catch (err) {
             console.error("Error fetching batches:", err);
             setError("Failed to load batches.");

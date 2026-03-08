@@ -28,9 +28,23 @@ export default function AdminDashboard() {
                     throw new Error("Failed to fetch stats");
                 }
 
+                // Fallback: If fetching batches fails (table not created), derive count from unique members' batches
+                let finalBatchesCount = batchesCount || 0;
+
+                if (batchesError || batchesCount === 0 || batchesCount === null) {
+                    const { data: membersForCount, error: fallbackError } = await supabase
+                        .from('batch_members')
+                        .select('batch');
+
+                    if (!fallbackError && membersForCount) {
+                        const uniqueBatches = new Set(membersForCount.map(m => m.batch));
+                        finalBatchesCount = uniqueBatches.size;
+                    }
+                }
+
                 setStats({
                     totalMembers: membersCount || 0,
-                    totalBatches: batchesCount || 0,
+                    totalBatches: finalBatchesCount,
                     loading: false,
                     error: false
                 });
