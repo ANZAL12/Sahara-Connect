@@ -48,22 +48,43 @@ export default function BatchNetworkSection() {
   useEffect(() => {
     async function fetchBatches() {
       try {
-        const { data, error } = await supabase
+        // 1. Fetch all members to get counts and derive fallback batches
+        const { data: membersData, error: membersError } = await supabase
           .from('batch_members')
-          .select('batch')
-          .order('batch', { ascending: false });
+          .select('batch');
 
-        if (error) throw error;
+        if (membersError) throw membersError;
 
-        // Group by batch
+        // Group members by batch
         const batchCounts: Record<string, number> = {};
-        data?.forEach((row) => {
+        membersData?.forEach((row) => {
           batchCounts[row.batch] = (batchCounts[row.batch] || 0) + 1;
         });
 
-        // Format to UI array
-        const formattedBatches = Object.entries(batchCounts).map(([year, count], index) => {
+        // 2. Try fetching explicit batches created by Admin
+        const { data: explicitBatches } = await supabase
+          .from('batches')
+          .select('year')
+          .order('year', { ascending: false });
+
+        // 3. Merge explicit and derived batches uniquely
+        const uniqueYears = new Set<string>();
+
+        // Add explicit batches first
+        if (explicitBatches && explicitBatches.length > 0) {
+          explicitBatches.forEach(b => uniqueYears.add(b.year));
+        }
+
+        // Add derived batches (in case the admin table is empty but members exist)
+        Object.keys(batchCounts).forEach(year => uniqueYears.add(year));
+
+        // Sort years descending
+        const sortedYears = Array.from(uniqueYears).sort().reverse();
+
+        // 4. Format to UI array
+        const formattedBatches = sortedYears.map((year, index) => {
           const config = aestheticConfigs[index % aestheticConfigs.length];
+          const count = batchCounts[year] || 0;
           return {
             year,
             members: count,
