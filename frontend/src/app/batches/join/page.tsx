@@ -111,7 +111,7 @@ function JoinBatchForm() {
                     {/* Decorative Header Banner */}
                     <div className="h-3 bg-gradient-to-r from-gray-900 via-gray-700 to-black w-full" />
 
-                    <CardHeader className="text-center pb-6 pt-10 px-8 border-b border-gray-100">
+                    <CardHeader className="text-center pb-6 pt-10 px-4 sm:px-8 border-b border-gray-100">
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
@@ -120,7 +120,7 @@ function JoinBatchForm() {
                         >
                             <GraduationCap className="w-8 h-8 text-gray-800" />
                         </motion.div>
-                        <CardTitle className="text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-tight">
+                        <CardTitle className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-tight">
                             Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">
                                 {prefilledBatch ? `Batch ${prefilledBatch}` : "The Network"}
                             </span>
@@ -130,7 +130,7 @@ function JoinBatchForm() {
                         </CardDescription>
                     </CardHeader>
 
-                    <CardContent className="p-8 md:p-12 bg-gray-50/30">
+                    <CardContent className="p-5 sm:p-8 md:p-12 bg-gray-50/30">
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
@@ -143,14 +143,14 @@ function JoinBatchForm() {
 
                         <form onSubmit={handleSubmit} className="space-y-10">
                             {/* Mandatory Section */}
-                            <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                            <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
                                 <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
                                     <div className="bg-gray-100 p-2 rounded-lg"><User className="w-5 h-5 text-gray-700" /></div>
                                     <h3 className="text-2xl font-bold text-gray-900">Personal Details</h3>
                                     <span className="ml-auto text-xs font-semibold text-red-500 bg-red-50 px-3 py-1 rounded-full uppercase tracking-wider">Required</span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
                                     <div className="space-y-2.5">
                                         <label htmlFor="name" className="text-sm font-semibold text-gray-900 tracking-wide">Full Name *</label>
                                         <div className="relative">
@@ -226,14 +226,14 @@ function JoinBatchForm() {
                             </div>
 
                             {/* Optional Section */}
-                            <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                            <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
                                 <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
                                     <div className="bg-blue-50 p-2 rounded-lg"><Briefcase className="w-5 h-5 text-blue-600" /></div>
                                     <h3 className="text-2xl font-bold text-gray-900">Professional Details</h3>
                                     <span className="ml-auto text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-wider">Optional</span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
                                     <div className="space-y-2.5">
                                         <label htmlFor="company" className="text-sm font-semibold text-gray-900 tracking-wide">Current Company</label>
                                         <div className="relative">
@@ -278,7 +278,7 @@ function JoinBatchForm() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    className="w-full sm:w-32 h-12 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 text-base rounded-xl transition-all"
+                                    className="w-full sm:w-32 h-12 border-red-200 text-red-600 font-semibold hover:bg-red-50 hover:text-red-700 hover:border-red-300 text-base rounded-xl transition-all"
                                     onClick={() => router.back()}
                                 >
                                     Cancel
@@ -308,7 +308,7 @@ function JoinBatchForm() {
 
 export default function JoinBatchPage() {
     return (
-        <main className="min-h-screen bg-[#f8fafc] py-32 px-4 sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-[#f8fafc] py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
             {/* Abstract Background Design */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-20 bg-gradient-to-b from-gray-300 to-transparent blur-3xl rounded-full" />
