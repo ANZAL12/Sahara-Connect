@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
 import { Building2, GraduationCap, MapPin, Briefcase, Linkedin, Mail, Phone, User, Calendar } from "lucide-react";
@@ -17,7 +17,7 @@ function JoinBatchForm() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [availableBatches, setAvailableBatches] = useState<string[]>([]);
+
 
     const [formData, setFormData] = useState({
         name: "",
@@ -32,26 +32,6 @@ function JoinBatchForm() {
         linkedin_url: ""
     });
 
-    // Fetch available batches
-    useEffect(() => {
-        async function fetchBatches() {
-            try {
-                const { data, error } = await supabase
-                    .from('batch_members')
-                    .select('batch')
-                    .order('batch', { ascending: false });
-
-                if (!error && data) {
-                    // Extract unique batch years
-                    const uniqueBatches = Array.from(new Set(data.map(item => item.batch)));
-                    setAvailableBatches(uniqueBatches);
-                }
-            } catch (err) {
-                console.error("Failed to fetch batches for dropdown");
-            }
-        }
-        fetchBatches();
-    }, []);
 
     // Sync batch if searchParam updates
     useEffect(() => {
@@ -164,26 +144,16 @@ function JoinBatchForm() {
                                         <label htmlFor="batch" className="text-sm font-semibold text-gray-900 tracking-wide">Batch Year *</label>
                                         <div className="relative">
                                             <Calendar className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400 z-10" />
-                                            <Select
+                                            <Input
+                                                id="batch"
+                                                name="batch"
+                                                required
                                                 value={formData.batch}
-                                                onValueChange={(value: string) => setFormData(prev => ({ ...prev, batch: value }))}
+                                                onChange={handleChange}
+                                                placeholder="e.g. 2024"
                                                 disabled={!!prefilledBatch}
-                                            >
-                                                <SelectTrigger className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium focus:ring-black focus:border-black text-base transition-all shadow-sm w-full data-[disabled]:bg-gray-50 data-[disabled]:text-gray-500 data-[disabled]:opacity-100">
-                                                    <SelectValue placeholder={availableBatches.length === 0 && !prefilledBatch ? "Loading batches..." : "Select Batch Year"} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {prefilledBatch && !availableBatches.includes(prefilledBatch) && (
-                                                        <SelectItem value={prefilledBatch}>{prefilledBatch}</SelectItem>
-                                                    )}
-                                                    {availableBatches.map(year => (
-                                                        <SelectItem key={year} value={year}>{year}</SelectItem>
-                                                    ))}
-                                                    {availableBatches.length === 0 && !prefilledBatch && (
-                                                        <SelectItem value="none" disabled>No batches available yet</SelectItem>
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm disabled:bg-gray-50 disabled:text-gray-500 disabled:opacity-100"
+                                            />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
