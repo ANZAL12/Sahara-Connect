@@ -94,7 +94,7 @@ export default function MembersManagement() {
                 </div>
             )}
 
-            <Card className="shadow-md border-gray-100 overflow-hidden bg-white">
+            <Card className="shadow-md border-gray-100 overflow-hidden bg-white text-gray-900">
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <Users className="w-5 h-5 text-gray-500" />

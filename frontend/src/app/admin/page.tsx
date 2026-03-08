@@ -58,7 +58,7 @@ export default function AdminDashboard() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white">
+                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white text-gray-900">
                     <CardHeader className="flex flex-row items-center justify-between pb-4 bg-gray-50/50 border-b border-gray-100">
                         <CardTitle className="text-sm font-bold text-gray-600 uppercase tracking-wider">Total Members</CardTitle>
                         <div className="p-2 bg-blue-100 rounded-lg">
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white">
+                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white text-gray-900">
                     <CardHeader className="flex flex-row items-center justify-between pb-4 bg-gray-50/50 border-b border-gray-100">
                         <CardTitle className="text-sm font-bold text-gray-600 uppercase tracking-wider">Registered Batches</CardTitle>
                         <div className="p-2 bg-purple-100 rounded-lg">

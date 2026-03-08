@@ -109,7 +109,7 @@ export default function BatchesManagement() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
-                    <Card className="shadow-md border-gray-100 sticky top-24 bg-white">
+                    <Card className="shadow-md border-gray-100 sticky top-24 bg-white text-gray-900">
                         <CardHeader className="pb-4 bg-gray-50/50 border-b border-gray-100">
                             <CardTitle className="flex items-center gap-2">
                                 <CalendarDays className="w-5 h-5 text-gray-700" />
@@ -147,7 +147,7 @@ export default function BatchesManagement() {
                 </div>
 
                 <div className="lg:col-span-2">
-                    <Card className="shadow-md border-gray-100 overflow-hidden bg-white">
+                    <Card className="shadow-md border-gray-100 overflow-hidden bg-white text-gray-900">
                         <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                             <Database className="w-5 h-5 text-gray-500" />
                             <h3 className="font-semibold text-gray-800">Current Batches</h3>
