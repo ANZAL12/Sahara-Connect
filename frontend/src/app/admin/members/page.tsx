@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Loader2, Users, Search, GraduationCap } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 type Member = {
     id?: string;
@@ -17,11 +19,14 @@ type Member = {
     created_at?: string;
 };
 
-export default function MembersManagement() {
+function MembersContent() {
+    const searchParams = useSearchParams();
+    const initialSearch = searchParams.get('batch') || searchParams.get('search') || "";
+
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(initialSearch);
 
     useEffect(() => {
         fetchMembers();
@@ -182,5 +187,17 @@ export default function MembersManagement() {
                 </div>
             </Card>
         </div>
+    );
+}
+
+export default function MembersManagement() {
+    return (
+        <Suspense fallback={
+            <div className="p-12 flex justify-center items-center">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+            </div>
+        }>
+            <MembersContent />
+        </Suspense>
     );
 }

@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Plus, Loader2, CalendarDays, Database } from "lucide-react";
+import { Trash2, Plus, Loader2, CalendarDays, Database, Users } from "lucide-react";
+import Link from "next/link";
 
 type Batch = {
     year: string;
@@ -195,14 +196,18 @@ export default function BatchesManagement() {
                             ) : (
                                 batches.map((batch) => (
                                     <div key={batch.year} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                                        <div>
-                                            <div className="font-semibold text-lg text-gray-900 border border-gray-200 bg-white rounded-md px-3 py-1 inline-block">
+                                        <Link href={`/admin/members?batch=${batch.year}`} className="flex-1 group">
+                                            <div className="font-semibold text-lg text-gray-900 border border-gray-200 bg-white rounded-md px-3 py-1 inline-block group-hover:border-blue-300 group-hover:text-blue-700 transition-colors">
                                                 {batch.year}
                                             </div>
-                                            <div className="text-xs text-gray-400 mt-2">
-                                                Added: {new Date(batch.created_at).toLocaleDateString()}
+                                            <div className="flex items-center gap-2 text-xs text-gray-400 mt-2">
+                                                <span>Added: {new Date(batch.created_at).toLocaleDateString()}</span>
+                                                <span>•</span>
+                                                <span className="text-blue-600 flex items-center group-hover:underline">
+                                                    <Users className="w-3 h-3 mr-1" /> View Members
+                                                </span>
                                             </div>
-                                        </div>
+                                        </Link>
 
                                         <Button
                                             variant="ghost"
