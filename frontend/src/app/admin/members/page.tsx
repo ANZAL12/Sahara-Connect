@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Loader2, Users, Search, GraduationCap } from "lucide-react";
+import { Trash2, Loader2, Users, Search, GraduationCap, Download } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -78,6 +78,38 @@ function MembersContent() {
         }
     };
 
+    const handleExportCSV = () => {
+        if (members.length === 0) return;
+
+        // Extract headers
+        const headers = ["Name", "Email", "Batch", "Job Title", "Company", "Joined Date"];
+
+        // Map data rows
+        const csvRows = members.map(member => {
+            return [
+                `"${member.name.replace(/"/g, '""')}"`,
+                `"${member.email.replace(/"/g, '""')}"`,
+                `"${member.batch.replace(/"/g, '""')}"`,
+                `"${(member.job_title || "").replace(/"/g, '""')}"`,
+                `"${(member.company || "").replace(/"/g, '""')}"`,
+                `"${member.created_at ? new Date(member.created_at).toLocaleDateString() : ""}"`
+            ].join(",");
+        });
+
+        // Combine headers and rows
+        const csvContent = [headers.join(","), ...csvRows].join("\n");
+
+        // Create a Blob and trigger download
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `saharaconnect_members_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const filteredMembers = members.filter(member =>
         member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,6 +123,15 @@ function MembersContent() {
                     <h1 className="text-3xl font-bold font-serif text-gray-900">Manage Members</h1>
                     <p className="text-gray-500 mt-1">Review, search, and manage alumni across all batches.</p>
                 </div>
+
+                <Button
+                    onClick={handleExportCSV}
+                    disabled={members.length === 0}
+                    className="bg-black text-white hover:bg-gray-800"
+                >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                </Button>
             </div>
 
             {error && (
