@@ -40,13 +40,13 @@ export default function AboutSection() {
               <p>
                 Our alumni network spans across the globe, working in diverse fields,
                 yet united by the common thread of having called Sahara home. Whether
-                you're a recent graduate or someone who stayed decades ago, the spirit
+                you&apos;re a recent graduate or someone who stayed decades ago, the spirit
                 of Sahara lives on in each of us.
               </p>
 
               <p>
                 Through Sahara Connect, we maintain these connections, celebrate our
-                shared history, and continue to support each other's journeys forward.
+                shared history, and continue to support each other&apos;s journeys forward.
               </p>
             </div>
           </motion.div>
