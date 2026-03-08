@@ -8,12 +8,17 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Loader2, Users, Search, GraduationCap, Download } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 type Member = {
     id?: string;
     name: string;
     email: string;
+    phone_number?: string;
     batch: string;
+    course?: string;
+    branch?: string;
     job_title?: string;
     company?: string;
     created_at?: string;
@@ -78,36 +83,36 @@ function MembersContent() {
         }
     };
 
-    const handleExportCSV = () => {
+    const handleExportPDF = () => {
         if (members.length === 0) return;
 
-        // Extract headers
-        const headers = ["Name", "Email", "Batch", "Job Title", "Company", "Joined Date"];
+        const doc = new jsPDF();
 
-        // Map data rows
-        const csvRows = members.map(member => {
-            return [
-                `"${member.name.replace(/"/g, '""')}"`,
-                `"${member.email.replace(/"/g, '""')}"`,
-                `"${member.batch.replace(/"/g, '""')}"`,
-                `"${(member.job_title || "").replace(/"/g, '""')}"`,
-                `"${(member.company || "").replace(/"/g, '""')}"`,
-                `"${member.created_at ? new Date(member.created_at).toLocaleDateString() : ""}"`
-            ].join(",");
+        doc.setFontSize(16);
+        doc.text("Sahara Connect - Members Directory", 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+        const tableColumn = ["Name", "Email", "Phone", "Batch", "Dept/Course", "Professional Identity", "Joined Date"];
+        const tableRows = members.map(member => [
+            member.name,
+            member.email,
+            member.phone_number || "N/A",
+            member.batch,
+            `${member.course || ""} ${member.branch ? '- ' + member.branch : ''}`.trim() || "N/A",
+            `${member.job_title || ""} ${member.company ? 'at ' + member.company : ''}`.trim() || "N/A",
+            member.created_at ? new Date(member.created_at).toLocaleDateString() : "N/A"
+        ]);
+
+        autoTable(doc, {
+            head: [tableColumn],
+            body: tableRows,
+            startY: 28,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [17, 24, 39] }, // Tailwind gray-900
         });
 
-        // Combine headers and rows
-        const csvContent = [headers.join(","), ...csvRows].join("\n");
-
-        // Create a Blob and trigger download
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `saharaconnect_members_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        doc.save(`saharaconnect_members_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     const filteredMembers = members.filter(member =>
@@ -125,12 +130,12 @@ function MembersContent() {
                 </div>
 
                 <Button
-                    onClick={handleExportCSV}
+                    onClick={handleExportPDF}
                     disabled={members.length === 0}
                     className="bg-black text-white hover:bg-gray-800"
                 >
                     <Download className="w-4 h-4 mr-2" />
-                    Export CSV
+                    Export PDF
                 </Button>
             </div>
 
@@ -165,8 +170,8 @@ function MembersContent() {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-white border-b border-gray-100 text-gray-500">
                             <tr>
-                                <th className="px-6 py-4 font-medium">Name</th>
-                                <th className="px-6 py-4 font-medium">Batch</th>
+                                <th className="px-6 py-4 font-medium">Member & Contact</th>
+                                <th className="px-6 py-4 font-medium hidden sm:table-cell">Education</th>
                                 <th className="px-6 py-4 font-medium hidden md:table-cell">Professional Identity</th>
                                 <th className="px-6 py-4 font-medium text-right">Actions</th>
                             </tr>
@@ -190,13 +195,23 @@ function MembersContent() {
                                     <tr key={member.id || String(i)} className="hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="font-semibold text-gray-900">{member.name}</div>
-                                            <div className="text-gray-500 mt-0.5 text-xs">{member.email}</div>
+                                            <div className="text-gray-500 mt-0.5 text-xs flex flex-col gap-1">
+                                                <span>{member.email}</span>
+                                                {member.phone_number && <span>{member.phone_number}</span>}
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center bg-gray-100 text-gray-700 font-medium px-2.5 py-1 rounded-md text-xs border border-gray-200">
-                                                <GraduationCap className="w-3 h-3 mr-1" />
-                                                {member.batch}
-                                            </span>
+                                        <td className="px-6 py-4 hidden sm:table-cell">
+                                            <div className="flex flex-col items-start gap-1">
+                                                <span className="inline-flex items-center bg-gray-100 text-gray-700 font-medium px-2.5 py-1 rounded-md text-xs border border-gray-200">
+                                                    <GraduationCap className="w-3 h-3 mr-1" />
+                                                    {member.batch}
+                                                </span>
+                                                {(member.course || member.branch) && (
+                                                    <span className="text-xs text-gray-500">
+                                                        {member.course} {member.branch && `- ${member.branch}`}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 hidden md:table-cell">
                                             {member.job_title || member.company ? (
