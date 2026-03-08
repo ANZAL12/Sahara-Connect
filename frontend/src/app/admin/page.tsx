@@ -58,14 +58,14 @@ export default function AdminDashboard() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 bg-gradient-to-br from-blue-50 to-transparent">
+                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="flex flex-row items-center justify-between pb-4 bg-gray-50/50 border-b border-gray-100">
                         <CardTitle className="text-sm font-bold text-gray-600 uppercase tracking-wider">Total Members</CardTitle>
                         <div className="p-2 bg-blue-100 rounded-lg">
                             <Users className="w-5 h-5 text-blue-600" />
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-6 pb-8">
+                    <CardContent className="pt-8 pb-8">
                         <div className="text-5xl font-bold text-gray-900 tracking-tighter">
                             {stats.loading ? "..." : stats.totalMembers}
                         </div>
@@ -75,14 +75,14 @@ export default function AdminDashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 bg-gradient-to-br from-purple-50 to-transparent">
+                <Card className="shadow-lg border-gray-100 rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="flex flex-row items-center justify-between pb-4 bg-gray-50/50 border-b border-gray-100">
                         <CardTitle className="text-sm font-bold text-gray-600 uppercase tracking-wider">Registered Batches</CardTitle>
                         <div className="p-2 bg-purple-100 rounded-lg">
                             <Layers className="w-5 h-5 text-purple-600" />
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-6 pb-8">
+                    <CardContent className="pt-8 pb-8">
                         <div className="text-5xl font-bold text-gray-900 tracking-tighter">
                             {stats.loading ? "..." : stats.totalBatches}
                         </div>
