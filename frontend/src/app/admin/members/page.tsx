@@ -70,9 +70,17 @@ function MembersContent() {
                 query = query.eq('email', member.email);
             }
 
-            const { error } = await query;
+            // Chain .select() to verify the row was actually deleted
+            const { error, data } = await query.select();
 
             if (error) throw error;
+
+            // If data is empty, it means the query executed successfully but 0 rows were affected.
+            // In Supabase, this almost always means Row Level Security (RLS) is blocking the DELETE.
+            if (!data || data.length === 0) {
+                throw new Error("Deletion blocked by Database. Please add a DELETE policy in your Supabase Row Level Security settings.");
+            }
+
             await fetchMembers();
         } catch (err: unknown) {
             if (err instanceof Error) {
