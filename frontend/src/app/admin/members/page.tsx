@@ -1,0 +1,186 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Trash2, Loader2, Users, Search, GraduationCap } from "lucide-react";
+
+type Member = {
+    id?: string;
+    name: string;
+    email: string;
+    batch: string;
+    job_title?: string;
+    company?: string;
+    created_at?: string;
+};
+
+export default function MembersManagement() {
+    const [members, setMembers] = useState<Member[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        fetchMembers();
+    }, []);
+
+    async function fetchMembers() {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('batch_members')
+                .select('*')
+                .order('batch', { ascending: false });
+
+            if (error) throw error;
+            setMembers(data || []);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to load members.");
+            } else {
+                setError("Failed to load members.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleDelete = async (member: Member) => {
+        if (!confirm(`Are you sure you want to remove ${member.name} from the network?`)) return;
+
+        try {
+            let query = supabase.from('batch_members').delete();
+
+            if (member.id) {
+                query = query.eq('id', member.id);
+            } else {
+                query = query.eq('email', member.email);
+            }
+
+            const { error } = await query;
+
+            if (error) throw error;
+            await fetchMembers();
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to delete member.");
+            } else {
+                setError("Failed to delete member.");
+            }
+        }
+    };
+
+    const filteredMembers = members.filter(member =>
+        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.batch.includes(searchQuery)
+    );
+
+    return (
+        <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold font-serif text-gray-900">Manage Members</h1>
+                    <p className="text-gray-500 mt-1">Review, search, and manage alumni across all batches.</p>
+                </div>
+            </div>
+
+            {error && (
+                <div className="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200">
+                    {error}
+                </div>
+            )}
+
+            <Card className="shadow-md border-gray-100 overflow-hidden">
+                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <Users className="w-5 h-5 text-gray-500" />
+                        <h3 className="font-semibold text-gray-800">Directory</h3>
+                        <span className="bg-gray-200 text-gray-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
+                            {members.length} Users
+                        </span>
+                    </div>
+
+                    <div className="relative w-full sm:w-72">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                        <Input
+                            placeholder="Search by name, email, or batch..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 h-9 bg-white w-full border-gray-200"
+                        />
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-white border-b border-gray-100 text-gray-500">
+                            <tr>
+                                <th className="px-6 py-4 font-medium">Name</th>
+                                <th className="px-6 py-4 font-medium">Batch</th>
+                                <th className="px-6 py-4 font-medium hidden md:table-cell">Professional Identity</th>
+                                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50 bg-white">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={4} className="p-12 text-center text-gray-400">
+                                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-gray-300" />
+                                        Loading members matrix...
+                                    </td>
+                                </tr>
+                            ) : filteredMembers.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="p-12 text-center text-gray-500">
+                                        No members match your search criteria.
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredMembers.map((member, i) => (
+                                    <tr key={member.id || String(i)} className="hover:bg-gray-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="font-semibold text-gray-900">{member.name}</div>
+                                            <div className="text-gray-500 mt-0.5 text-xs">{member.email}</div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center bg-gray-100 text-gray-700 font-medium px-2.5 py-1 rounded-md text-xs border border-gray-200">
+                                                <GraduationCap className="w-3 h-3 mr-1" />
+                                                {member.batch}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 hidden md:table-cell">
+                                            {member.job_title || member.company ? (
+                                                <div>
+                                                    <span className="text-gray-800 font-medium">{member.job_title}</span>
+                                                    {member.job_title && member.company && <span className="text-gray-400 mx-1">at</span>}
+                                                    <span className="text-gray-600">{member.company}</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-400 italic text-xs">Not provided</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => handleDelete(member)}
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                                <Trash2 className="w-4 h-4 mr-2" />
+                                                Remove
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+        </div>
+    );
+}
