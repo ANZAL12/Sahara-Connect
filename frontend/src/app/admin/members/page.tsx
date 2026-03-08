@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Loader2, Users, Search, GraduationCap, Download } from "lucide-react";
+import { Trash2, Loader2, Users, Search, GraduationCap, Download, Plus } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import jsPDF from "jspdf";
@@ -137,14 +138,23 @@ function MembersContent() {
                     <p className="text-gray-500 mt-1">Review, search, and manage alumni across all batches.</p>
                 </div>
 
-                <Button
-                    onClick={handleExportPDF}
-                    disabled={members.length === 0}
-                    className="bg-black text-white hover:bg-gray-800"
-                >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export PDF
-                </Button>
+                <div className="flex items-center gap-3 mt-4 md:mt-0">
+                    <Button
+                        onClick={handleExportPDF}
+                        disabled={members.length === 0}
+                        variant="outline"
+                        className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    >
+                        <Download className="w-4 h-4 mr-2" />
+                        Export PDF
+                    </Button>
+                    <Link href={`/admin/members/new${searchQuery.trim().length === 4 && !isNaN(Number(searchQuery.trim())) ? `?batch=${searchQuery.trim()}` : ''}`}>
+                        <Button className="bg-black text-white hover:bg-gray-800">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Member
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             {error && (
