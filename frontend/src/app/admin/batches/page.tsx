@@ -109,15 +109,15 @@ export default function BatchesManagement() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
-                    <Card className="shadow-md border-gray-100 sticky top-24">
-                        <CardHeader className="pb-4">
+                    <Card className="shadow-md border-gray-100 sticky top-24 bg-white">
+                        <CardHeader className="pb-4 bg-gray-50/50 border-b border-gray-100">
                             <CardTitle className="flex items-center gap-2">
                                 <CalendarDays className="w-5 h-5 text-gray-700" />
                                 Add New Batch
                             </CardTitle>
                             <CardDescription>Register a new graduation year format.</CardDescription>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-6">
                             <form onSubmit={handleAddBatch} className="space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700">Batch Year</label>
@@ -126,7 +126,7 @@ export default function BatchesManagement() {
                                         onChange={(e) => setNewBatchYear(e.target.value)}
                                         placeholder="e.g. 2025"
                                         required
-                                        className="h-11"
+                                        className="h-11 bg-white border-gray-200 text-gray-900"
                                     />
                                 </div>
                                 <Button
@@ -147,7 +147,7 @@ export default function BatchesManagement() {
                 </div>
 
                 <div className="lg:col-span-2">
-                    <Card className="shadow-md border-gray-100 overflow-hidden">
+                    <Card className="shadow-md border-gray-100 overflow-hidden bg-white">
                         <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                             <Database className="w-5 h-5 text-gray-500" />
                             <h3 className="font-semibold text-gray-800">Current Batches</h3>
