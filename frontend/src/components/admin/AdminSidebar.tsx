@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Layers, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Layers, LogOut, CalendarDays } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export function AdminSidebar() {
@@ -18,6 +18,7 @@ export function AdminSidebar() {
         { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
         { label: "Batches", href: "/admin/batches", icon: Layers },
         { label: "Members", href: "/admin/members", icon: Users },
+        { label: "Events", href: "/admin/events", icon: CalendarDays },
     ];
 
     return (
@@ -36,8 +37,8 @@ export function AdminSidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${isActive
-                                    ? "bg-black text-white shadow-md shadow-black/10"
-                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                ? "bg-black text-white shadow-md shadow-black/10"
+                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                                 }`}
                         >
                             <Icon className="w-5 h-5" />

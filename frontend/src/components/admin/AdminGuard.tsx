@@ -16,13 +16,17 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
         const checkAuth = async () => {
             const { data: { session } } = await supabase.auth.getSession();
+            console.log("AdminGuard session check:", { session, pathname });
+
             if (!mounted) return;
 
             if (!session) {
                 if (pathname !== '/admin/login') {
+                    console.log("No session, redirecting to login");
                     router.push('/admin/login');
                 }
             } else {
+                console.log("Session found, authenticated");
                 setAuthenticated(true);
             }
             setLoading(false);

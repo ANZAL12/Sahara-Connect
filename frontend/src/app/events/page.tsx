@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,114 +17,77 @@ import {
   Palette,
   Users,
   Mic2,
+  Loader2,
+  CalendarDays,
 } from "lucide-react";
 
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
 
-/* ── Mock Data ─────────────────────────────────────────── */
+/* ── Types ────────────────────────────────────────────── */
 
-const SAHARA_FEST = {
-  title: "Sahara Fest 2026",
-  tagline: "The Grand Annual Celebration",
-  date: "March 15, 2026",
-  time: "10:00 AM onwards",
-  venue: "Sahara Campus Grounds",
-  description:
-    "The flagship event of the Sahara community. Three days of competitions, performances, reunions, and unforgettable memories that bring every generation together.",
-  image: "/memories/Acer_Wallpaper_03_3840x2400.jpg",
+type Event = {
+  id: string;
+  title: string;
+  tagline?: string;
+  description?: string;
+  date: string;
+  time?: string;
+  venue?: string;
+  category?: string;
+  type: 'Sahara Fest' | 'Other Events';
+  image_url?: string;
+  is_featured: boolean;
+  created_at: string;
 };
 
-const PRE_EVENTS = [
-  {
-    id: 1,
-    title: "Battle of Bands",
-    date: "March 10, 2026",
-    time: "5:00 PM",
-    venue: "Open Air Theatre",
-    category: "Music",
-    icon: Music,
-    description:
-      "Bands from across batches compete in an electrifying showdown of talent and nostalgia.",
-  },
-  {
-    id: 2,
-    title: "Alumni Cricket Premier League",
-    date: "March 11, 2026",
-    time: "7:00 AM",
-    venue: "Sports Complex",
-    category: "Sports",
-    icon: Trophy,
-    description:
-      "Batch vs batch cricket tournament. Relive your school-ground glory days.",
-  },
-  {
-    id: 3,
-    title: "Art & Canvas Night",
-    date: "March 12, 2026",
-    time: "6:00 PM",
-    venue: "Exhibition Hall",
-    category: "Creative",
-    icon: Palette,
-    description:
-      "Collaborative mural painting and live art installations by alumni artists.",
-  },
-  {
-    id: 4,
-    title: "Panel Talk: Career Journeys",
-    date: "March 13, 2026",
-    time: "3:00 PM",
-    venue: "Auditorium",
-    category: "Talk",
-    icon: Mic2,
-    description:
-      "Distinguished alumni share career insights and mentor current students.",
-  },
-  {
-    id: 5,
-    title: "Networking Mixer",
-    date: "March 14, 2026",
-    time: "7:00 PM",
-    venue: "Rooftop Lounge",
-    category: "Networking",
-    icon: Users,
-    description:
-      "An evening of connections, conversations, and community over cocktails.",
-  },
-];
+/* ── Helpers ──────────────────────────────────────────── */
 
-const OTHER_EVENTS = [
-  {
-    id: 101,
-    title: "Quarterly Alumni Meet – Q2",
-    date: "June 20, 2026",
-    time: "4:00 PM",
-    venue: "Virtual (Zoom)",
-    category: "Community",
-    description:
-      "Stay connected with quarterly virtual catch-ups. Open to all batches.",
-  },
-  {
-    id: 102,
-    title: "Sahara Hackathon 2026",
-    date: "August 8-9, 2026",
-    time: "All Day",
-    venue: "Innovation Lab",
-    category: "Tech",
-    description:
-      "48-hour hackathon bringing alumni coders together to build solutions for real-world problems.",
-  },
-  {
-    id: 103,
-    title: "Annual Charity Run",
-    date: "October 2, 2026",
-    time: "6:00 AM",
-    venue: "City Waterfront",
-    category: "Social",
-    description:
-      "Run for a cause! Proceeds go to Sahara scholarship funds for underprivileged students.",
-  },
-];
+const getCategoryIcon = (category?: string) => {
+  const cat = category?.toLowerCase() || "";
+  if (cat.includes("music")) return Music;
+  if (cat.includes("sport") || cat.includes("cricket")) return Trophy;
+  if (cat.includes("art") || cat.includes("creative")) return Palette;
+  if (cat.includes("talk") || cat.includes("mentor") || cat.includes("career")) return Mic2;
+  if (cat.includes("network") || cat.includes("community")) return Users;
+  return CalendarDays;
+};
+
+const formatDisplayDate = (dateStr: string) => {
+  if (!dateStr) return { day: "??", month: "???" };
+  
+  // Try parsing YYYY-MM-DD
+  const date = new Date(dateStr);
+  if (!isNaN(date.getTime())) {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+    return { day, month };
+  }
+
+  // Fallback for legacy "Month DD, YYYY" or other formats
+  const dayMatch = dateStr.match(/\d+/);
+  const monthMatch = dateStr.match(/[A-Za-z]+/);
+  
+  return {
+    day: dayMatch ? dayMatch[0].padStart(2, '0') : "15",
+    month: monthMatch ? monthMatch[0].slice(0, 3).toUpperCase() : "MAR"
+  };
+};
+
+const formatDisplayTime = (timeStr?: string) => {
+  if (!timeStr) return "";
+  
+  // If it's already in HH:MM format (from native picker)
+  if (timeStr.match(/^\d{2}:\d{2}$/)) {
+    const [hours, minutes] = timeStr.split(':');
+    let hr = parseInt(hours);
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    hr = hr % 12 || 12;
+    return `${hr}:${minutes} ${ampm}`;
+  }
+  
+  return timeStr;
+};
 
 const TABS = ["All", "Sahara Fest", "Other Events"];
 
@@ -131,6 +95,51 @@ const TABS = ["All", "Sahara Fest", "Other Events"];
 
 export default function EventsPage() {
   const [activeTab, setActiveTab] = useState("All");
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  async function fetchEvents() {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (err) {
+      console.error("Error fetching events:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const featuredEvent = events.find(e => e.type === 'Sahara Fest' && e.is_featured) ||
+    events.find(e => e.type === 'Sahara Fest') ||
+  {
+    title: "Sahara Fest 2026",
+    tagline: "The Grand Annual Celebration",
+    date: "March 15, 2026",
+    time: "10:00 AM onwards",
+    venue: "Sahara Campus Grounds",
+    image_url: "/memories/Acer_Wallpaper_03_3840x2400.jpg"
+  };
+
+  const saharaFestEvents = events.filter(e => e.type === 'Sahara Fest' && !e.is_featured);
+  const otherEventsList = events.filter(e => e.type === 'Other Events');
+
+  if (loading) {
+    return (
+      <div className="bg-background min-h-screen flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen">
@@ -138,7 +147,7 @@ export default function EventsPage() {
       <div className="relative h-[420px] md:h-[480px] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${SAHARA_FEST.image})` }}
+          style={{ backgroundImage: `url(${featuredEvent.image_url || "/memories/Acer_Wallpaper_03_3840x2400.jpg"})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
 
@@ -152,21 +161,27 @@ export default function EventsPage() {
               <Sparkles className="w-4 h-4 mr-1 inline" /> Upcoming
             </Badge>
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-3 drop-shadow-lg">
-              {SAHARA_FEST.title}
+              {featuredEvent.title}
             </h1>
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl">
-              {SAHARA_FEST.tagline}
-            </p>
+            {featuredEvent.tagline && (
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl">
+                {featuredEvent.tagline}
+              </p>
+            )}
             <div className="flex flex-wrap gap-6 mt-6 text-white/90 text-sm">
               <span className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" /> {SAHARA_FEST.date}
+                <Calendar className="w-4 h-4" /> {featuredEvent.date && featuredEvent.date.includes('-') ? new Date(featuredEvent.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : featuredEvent.date}
               </span>
-              <span className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> {SAHARA_FEST.time}
-              </span>
-              <span className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" /> {SAHARA_FEST.venue}
-              </span>
+              {featuredEvent.time && (
+                <span className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" /> {formatDisplayTime(featuredEvent.time)}
+                </span>
+              )}
+              {featuredEvent.venue && (
+                <span className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> {featuredEvent.venue}
+                </span>
+              )}
             </div>
           </motion.div>
         </Container>
@@ -186,11 +201,10 @@ export default function EventsPage() {
               <Button
                 key={tab}
                 variant={activeTab === tab ? "default" : "outline"}
-                className={`rounded-full px-6 transition-all duration-300 ${
-                  activeTab === tab
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "border-border text-foreground hover:border-primary hover:text-primary"
-                }`}
+                className={`rounded-full px-6 transition-all duration-300 ${activeTab === tab
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "border-border text-foreground hover:border-primary hover:text-primary"
+                  }`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -208,26 +222,20 @@ export default function EventsPage() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* Fest highlight card */}
-                <div className="mb-14">
-                  <h2 className="text-3xl font-serif font-bold text-foreground mb-2">
-                    <Sparkles className="w-6 h-6 text-accent inline mr-2" />
-                    Sahara Fest 2026
-                  </h2>
-                  <p className="text-muted-foreground mb-8 max-w-3xl">
-                    {SAHARA_FEST.description}
-                  </p>
-                </div>
+                {/* Fest highlight header (only if we have fest events) */}
+                {saharaFestEvents.length > 0 && (
+                  <div className="mb-14">
+                    <h2 className="text-3xl font-serif font-bold text-foreground mb-2">
+                      <Sparkles className="w-6 h-6 text-accent inline mr-2" />
+                      More Sahara Fest Events
+                    </h2>
+                  </div>
+                )}
 
-                {/* Pre-Events Timeline */}
-                <h3 className="text-xl font-semibold text-foreground mb-8 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" /> Pre-Event
-                  Schedule
-                </h3>
-
+                {/* Events Grid */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-                  {PRE_EVENTS.map((event, i) => {
-                    const Icon = event.icon;
+                  {saharaFestEvents.map((event, i) => {
+                    const Icon = getCategoryIcon(event.category);
                     return (
                       <motion.div
                         key={event.id}
@@ -236,42 +244,67 @@ export default function EventsPage() {
                         transition={{ duration: 0.5, delay: i * 0.08 }}
                         viewport={{ once: true }}
                       >
-                        <Card className="group h-full border border-border bg-card hover:scale-[1.02] hover:shadow-xl transition-all duration-500 overflow-hidden">
+                        <Card className="group h-full border border-border bg-card hover:scale-[1.02] hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col">
                           {/* Colour accent bar */}
                           <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary" />
 
-                          <CardContent className="p-6 flex flex-col h-full">
+                          {/* Event Image */}
+                          {event.image_url && (
+                            <div className="aspect-[16/10] w-full overflow-hidden">
+                              <img
+                                src={event.image_url}
+                                alt={event.title}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            </div>
+                          )}
+
+
+                          <CardContent className="p-6 flex flex-col flex-grow">
                             <div className="flex items-center gap-3 mb-4">
                               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                                 <Icon className="w-5 h-5" />
                               </div>
-                              <Badge
-                                variant="secondary"
-                                className="text-xs font-medium"
-                              >
-                                {event.category}
-                              </Badge>
+                              {event.category && (
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs font-medium"
+                                >
+                                  {event.category}
+                                </Badge>
+                              )}
                             </div>
 
                             <h4 className="text-lg font-bold text-foreground mb-2">
                               {event.title}
                             </h4>
-                            <p className="text-sm text-muted-foreground mb-4 flex-grow">
-                              {event.description}
-                            </p>
+                            {event.description && (
+                              <p className="text-sm text-muted-foreground mb-4 flex-grow">
+                                {event.description}
+                              </p>
+                            )}
 
-                            <div className="space-y-1 text-xs text-muted-foreground border-t border-border pt-4 mt-auto">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="w-3.5 h-3.5" />{" "}
-                                {event.date}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-3.5 h-3.5" /> {event.time}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <MapPin className="w-3.5 h-3.5" />{" "}
-                                {event.venue}
-                              </div>
+                            <div className="space-y-2 text-xs border-t border-border pt-4 mt-auto">
+                              {event.date && (
+                                <div className="flex items-center gap-2 text-foreground">
+                                  <Calendar className="w-3.5 h-3.5 text-primary flex-shrink-0" />{" "}
+                                  <span className="font-medium">
+                                    {event.date.includes('-') ? new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : event.date}
+                                  </span>
+                                </div>
+                              )}
+                              {event.time && (
+                                <div className="flex items-center gap-2 text-foreground">
+                                  <Clock className="w-3.5 h-3.5 text-primary flex-shrink-0" />{" "}
+                                  <span className="font-medium">{formatDisplayTime(event.time)}</span>
+                                </div>
+                              )}
+                              {event.venue && (
+                                <div className="flex items-center gap-2 text-foreground">
+                                  <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />{" "}
+                                  <span className="font-medium">{event.venue}</span>
+                                </div>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -291,71 +324,96 @@ export default function EventsPage() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <h2 className="text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-2">
-                  <Calendar className="w-6 h-6 text-primary" /> Upcoming
-                  Community Events
-                </h2>
+                {otherEventsList.length > 0 && (
+                  <>
+                    <h2 className="text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-2">
+                      <Calendar className="w-6 h-6 text-primary" /> Upcoming
+                      Community Events
+                    </h2>
 
-                <div className="space-y-6">
-                  {OTHER_EVENTS.map((event, i) => (
-                    <motion.div
-                      key={event.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: i * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <Card className="group border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all duration-500">
-                        <CardContent className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
-                          {/* Date Block */}
-                          <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                            <span className="text-2xl font-bold leading-none">
-                              {event.date.split(" ")[1]?.replace(",", "")}
-                            </span>
-                            <span className="text-xs font-medium uppercase mt-1">
-                              {event.date.split(" ")[0]?.slice(0, 3)}
-                            </span>
-                          </div>
+                    <div className="space-y-6">
+                      {otherEventsList.map((event, i) => (
+                        <motion.div
+                          key={event.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: i * 0.1 }}
+                          viewport={{ once: true }}
+                        >
+                          <Card className="group border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all duration-500">
+                            <CardContent className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
+                              {/* Date Block */}
+                              <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-center order-2 md:order-1">
+                                <span className="text-2xl font-bold leading-none">
+                                  {formatDisplayDate(event.date).day}
+                                </span>
+                                <span className="text-xs font-medium uppercase mt-1">
+                                  {formatDisplayDate(event.date).month}
+                                </span>
+                              </div>
 
-                          {/* Details */}
-                          <div className="flex-grow">
-                            <div className="flex flex-wrap items-center gap-2 mb-1">
-                              <h4 className="text-xl font-bold text-foreground">
-                                {event.title}
-                              </h4>
-                              <Badge
-                                variant="secondary"
-                                className="text-xs font-medium"
+                              {/* Event Image (Small Square/Portrait for Community Events) */}
+                              {event.image_url && (
+                                <div className="flex-shrink-0 w-full md:w-32 aspect-[16/10] rounded-xl overflow-hidden shadow-sm order-1 md:order-2">
+                                  <img
+                                    src={event.image_url}
+                                    alt={event.title}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                  />
+                                </div>
+                              )}
+
+
+                              {/* Details */}
+                              <div className="flex-grow order-3">
+
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <h4 className="text-xl font-bold text-foreground">
+                                    {event.title}
+                                  </h4>
+                                  {event.category && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="text-xs font-medium"
+                                    >
+                                      {event.category}
+                                    </Badge>
+                                  )}
+                                </div>
+                                {event.description && (
+                                  <p className="text-sm text-muted-foreground mb-3">
+                                    {event.description}
+                                  </p>
+                                )}
+                                <div className="flex flex-wrap gap-4 text-xs">
+                                  {event.time && (
+                                    <span className="flex items-center gap-1 font-medium text-foreground">
+                                      <Clock className="w-3.5 h-3.5 text-primary flex-shrink-0" /> {formatDisplayTime(event.time)}
+                                    </span>
+                                  )}
+                                  {event.venue && (
+                                    <span className="flex items-center gap-1 font-medium text-foreground">
+                                      <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />{" "}
+                                      {event.venue}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* CTA */}
+                              <Button
+                                variant="outline"
+                                className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
                               >
-                                {event.category}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              {event.description}
-                            </p>
-                            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" /> {event.time}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MapPin className="w-3.5 h-3.5" />{" "}
-                                {event.venue}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* CTA */}
-                          <Button
-                            variant="outline"
-                            className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
-                          >
-                            Details <ArrowRight className="w-4 h-4 ml-1" />
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
+                                Details <ArrowRight className="w-4 h-4 ml-1" />
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

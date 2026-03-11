@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { supabase } from "@/lib/supabase";
 import { Building2, GraduationCap, MapPin, Briefcase, Linkedin, Mail, Phone, User, Calendar } from "lucide-react";
 
+import { ImageUpload } from "@/components/admin/ImageUpload";
+
 function AddMemberForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -28,7 +30,8 @@ function AddMemberForm() {
         company: "",
         job_title: "",
         country: "",
-        linkedin_url: ""
+        linkedin_url: "",
+        profile_image_url: ""
     });
 
     useEffect(() => {
@@ -119,22 +122,33 @@ function AddMemberForm() {
                             <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
                                 <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
                                     <div className="bg-gray-100 p-2 rounded-lg"><User className="w-5 h-5 text-gray-700" /></div>
-                                    <h3 className="text-2xl font-bold text-gray-900">Personal Details</h3>
+                                    <h3 className="text-2xl font-bold text-black">Personal Details</h3>
                                     <span className="ml-auto text-xs font-semibold text-red-500 bg-red-50 px-3 py-1 rounded-full uppercase tracking-wider">Required</span>
+                                </div>
+                                <div className="mb-8 flex flex-col items-center">
+                                    <label className="text-sm font-semibold text-black tracking-wide mb-3 block w-full text-center">Profile Picture (Optional)</label>
+                                    <ImageUpload 
+                                        value={formData.profile_image_url}
+                                        onChange={(url) => setFormData(prev => ({ ...prev, profile_image_url: url }))}
+                                        bucket="member-profiles"
+                                        aspectRatio="1/1"
+                                        className="w-48 h-48 mx-auto"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-2 font-medium">Click to upload a square portrait</p>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
                                     <div className="space-y-2.5">
-                                        <label htmlFor="name" className="text-sm font-semibold text-gray-900 tracking-wide">Full Name *</label>
+                                        <label htmlFor="name" className="text-sm font-semibold text-black tracking-wide">Full Name *</label>
                                         <div className="relative">
                                             <User className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="name" name="name" required value={formData.name} onChange={handleChange} placeholder="Jane Smith"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="batch" className="text-sm font-semibold text-gray-900 tracking-wide">Batch Year *</label>
+                                        <label htmlFor="batch" className="text-sm font-semibold text-black tracking-wide">Batch Year *</label>
                                         <div className="relative">
                                             <Calendar className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400 z-10" />
                                             <Input
@@ -144,43 +158,43 @@ function AddMemberForm() {
                                                 value={formData.batch}
                                                 onChange={handleChange}
                                                 placeholder="e.g. 2024"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="email" className="text-sm font-semibold text-gray-900 tracking-wide">Email ID *</label>
+                                        <label htmlFor="email" className="text-sm font-semibold text-black tracking-wide">Email ID *</label>
                                         <div className="relative">
                                             <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder="jane@example.com"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="phone_number" className="text-sm font-semibold text-gray-900 tracking-wide">Phone Number *</label>
+                                        <label htmlFor="phone_number" className="text-sm font-semibold text-black tracking-wide">Phone Number *</label>
                                         <div className="relative">
                                             <Phone className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="phone_number" name="phone_number" type="tel" required value={formData.phone_number} onChange={handleChange} placeholder="+1 234 567 8900"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="course" className="text-sm font-semibold text-gray-900 tracking-wide">Course *</label>
+                                        <label htmlFor="course" className="text-sm font-semibold text-black tracking-wide">Course *</label>
                                         <div className="relative">
                                             <GraduationCap className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="course" name="course" required value={formData.course} onChange={handleChange} placeholder="e.g. B.Tech, M.Tech"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="branch" className="text-sm font-semibold text-gray-900 tracking-wide">Branch *</label>
+                                        <label htmlFor="branch" className="text-sm font-semibold text-black tracking-wide">Branch *</label>
                                         <div className="relative">
                                             <MapPin className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="branch" name="branch" required value={formData.branch} onChange={handleChange} placeholder="e.g. Computer Science"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
@@ -191,44 +205,44 @@ function AddMemberForm() {
                             <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
                                 <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
                                     <div className="bg-blue-50 p-2 rounded-lg"><Briefcase className="w-5 h-5 text-blue-600" /></div>
-                                    <h3 className="text-2xl font-bold text-gray-900">Professional Details</h3>
+                                    <h3 className="text-2xl font-bold text-black">Professional Details</h3>
                                     <span className="ml-auto text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-wider">Optional</span>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
                                     <div className="space-y-2.5">
-                                        <label htmlFor="company" className="text-sm font-semibold text-gray-900 tracking-wide">Current Company</label>
+                                        <label htmlFor="company" className="text-sm font-semibold text-black tracking-wide">Current Company</label>
                                         <div className="relative">
                                             <Building2 className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="company" name="company" value={formData.company} onChange={handleChange} placeholder="Tech Corp Inc."
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="job_title" className="text-sm font-semibold text-gray-900 tracking-wide">Job Title</label>
+                                        <label htmlFor="job_title" className="text-sm font-semibold text-black tracking-wide">Job Title</label>
                                         <div className="relative">
                                             <Briefcase className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="job_title" name="job_title" value={formData.job_title} onChange={handleChange} placeholder="Senior Software Engineer"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="country" className="text-sm font-semibold text-gray-900 tracking-wide">Country</label>
+                                        <label htmlFor="country" className="text-sm font-semibold text-black tracking-wide">Country</label>
                                         <div className="relative">
                                             <MapPin className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="country" name="country" value={formData.country} onChange={handleChange} placeholder="e.g. USA, UK, India"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label htmlFor="linkedin_url" className="text-sm font-semibold text-gray-900 tracking-wide">LinkedIn Profile</label>
+                                        <label htmlFor="linkedin_url" className="text-sm font-semibold text-black tracking-wide">LinkedIn Profile</label>
                                         <div className="relative">
                                             <Linkedin className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                             <Input id="linkedin_url" name="linkedin_url" type="url" value={formData.linkedin_url} onChange={handleChange} placeholder="https://linkedin.com/in/username"
-                                                className="pl-11 h-12 bg-white border-gray-200 text-gray-900 font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
+                                                className="pl-11 h-12 bg-white border-gray-200 text-black font-medium placeholder:text-gray-400 focus-visible:ring-black focus-visible:border-black text-base transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>

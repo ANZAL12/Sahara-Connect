@@ -124,7 +124,7 @@ export default function BatchesManagement() {
         <div className="p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold font-serif text-gray-900">Manage Batches</h1>
+                    <h1 className="text-3xl font-bold font-serif text-black">Manage Batches</h1>
                     <p className="text-gray-500 mt-1">Add or remove recognized batches in Sahara Connect.</p>
                 </div>
             </div>
@@ -139,7 +139,7 @@ export default function BatchesManagement() {
                 <div className="lg:col-span-1">
                     <Card className="shadow-md border-gray-100 sticky top-24 bg-white text-gray-900">
                         <CardHeader className="pb-4 bg-gray-50/50 border-b border-gray-100">
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-black">
                                 <CalendarDays className="w-5 h-5 text-gray-700" />
                                 Add New Batch
                             </CardTitle>
@@ -148,13 +148,13 @@ export default function BatchesManagement() {
                         <CardContent className="pt-6">
                             <form onSubmit={handleAddBatch} className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Batch Year</label>
+                                    <label className="text-sm font-medium text-black">Batch Year</label>
                                     <Input
                                         value={newBatchYear}
                                         onChange={(e) => setNewBatchYear(e.target.value)}
                                         placeholder="e.g. 2025"
                                         required
-                                        className="h-11 bg-white border-gray-200 text-gray-900"
+                                        className="h-11 bg-white border-gray-200 text-black"
                                     />
                                 </div>
                                 <Button
@@ -178,7 +178,7 @@ export default function BatchesManagement() {
                     <Card className="shadow-md border-gray-100 overflow-hidden bg-white text-gray-900">
                         <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                             <Database className="w-5 h-5 text-gray-500" />
-                            <h3 className="font-semibold text-gray-800">Current Batches</h3>
+                            <h3 className="font-semibold text-black">Current Batches</h3>
                             <span className="ml-auto bg-gray-200 text-gray-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
                                 {batches.length} Total
                             </span>
@@ -197,7 +197,7 @@ export default function BatchesManagement() {
                                 batches.map((batch) => (
                                     <div key={batch.year} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                                         <Link href={`/admin/members?batch=${batch.year}`} className="flex-1 group">
-                                            <div className="font-semibold text-lg text-gray-900 border border-gray-200 bg-white rounded-md px-3 py-1 inline-block group-hover:border-blue-300 group-hover:text-blue-700 transition-colors">
+                                            <div className="font-semibold text-lg text-black border border-gray-200 bg-white rounded-md px-3 py-1 inline-block group-hover:border-blue-300 group-hover:text-blue-700 transition-colors">
                                                 {batch.year}
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-gray-400 mt-2">

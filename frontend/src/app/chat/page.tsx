@@ -156,7 +156,7 @@ export default function ChatPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={`Message #${selectedChannel}`}
-              className="flex-1"
+              className="flex-1 bg-white text-black"
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             />
             <Button onClick={handleSendMessage} size="sm">

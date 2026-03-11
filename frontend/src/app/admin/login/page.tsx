@@ -22,13 +22,16 @@ export default function AdminLogin() {
         setError(null);
 
         try {
-            const { error: authError } = await supabase.auth.signInWithPassword({
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
+            console.log("Login attempt:", { email, success: !authError, error: authError });
+
             if (authError) throw authError;
 
+            console.log("Login successful, session:", data.session);
             router.push("/admin");
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -65,7 +68,7 @@ export default function AdminLogin() {
                     )}
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2.5">
-                            <label className="text-sm font-semibold text-gray-900 tracking-wide">Email Address</label>
+                            <label className="text-sm font-semibold text-black tracking-wide">Email Address</label>
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                 <Input
@@ -73,13 +76,13 @@ export default function AdminLogin() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-11 h-12 bg-white border-gray-200 focus-visible:ring-black text-base transition-all shadow-sm"
+                                    className="pl-11 h-12 bg-white border-gray-200 focus-visible:ring-black text-black text-base transition-all shadow-sm"
                                     placeholder="admin@example.com"
                                 />
                             </div>
                         </div>
                         <div className="space-y-2.5">
-                            <label className="text-sm font-semibold text-gray-900 tracking-wide">Password</label>
+                            <label className="text-sm font-semibold text-black tracking-wide">Password</label>
                             <div className="relative">
                                 <Lock className="absolute left-3.5 top-3.5 h-5 w-5 text-gray-400" />
                                 <Input
@@ -87,7 +90,7 @@ export default function AdminLogin() {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-11 h-12 bg-white border-gray-200 focus-visible:ring-black text-base transition-all shadow-sm"
+                                    className="pl-11 h-12 bg-white border-gray-200 focus-visible:ring-black text-black text-base transition-all shadow-sm"
                                     placeholder="••••••••"
                                 />
                             </div>

@@ -134,7 +134,7 @@ function MembersContent() {
         <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold font-serif text-gray-900">Manage Members</h1>
+                    <h1 className="text-3xl font-bold font-serif text-black">Manage Members</h1>
                     <p className="text-gray-500 mt-1">Review, search, and manage alumni across all batches.</p>
                 </div>
 
@@ -167,7 +167,7 @@ function MembersContent() {
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <Users className="w-5 h-5 text-gray-500" />
-                        <h3 className="font-semibold text-gray-800">Directory</h3>
+                        <h3 className="font-semibold text-black">Directory</h3>
                         <span className="bg-gray-200 text-gray-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
                             {members.length} Users
                         </span>
@@ -179,7 +179,7 @@ function MembersContent() {
                             placeholder="Search by name, email, or batch..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 h-9 bg-white w-full border-gray-200 text-gray-900"
+                            className="pl-9 h-9 bg-white w-full border-gray-200 text-black"
                         />
                     </div>
                 </div>
@@ -188,10 +188,10 @@ function MembersContent() {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-white border-b border-gray-100 text-gray-500">
                             <tr>
-                                <th className="px-6 py-4 font-medium">Member & Contact</th>
-                                <th className="px-6 py-4 font-medium hidden sm:table-cell">Education</th>
-                                <th className="px-6 py-4 font-medium hidden md:table-cell">Professional Identity</th>
-                                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                                <th className="px-6 py-4 font-medium text-black">Member & Contact</th>
+                                <th className="px-6 py-4 font-medium hidden sm:table-cell text-black">Education</th>
+                                <th className="px-6 py-4 font-medium hidden md:table-cell text-black">Professional Identity</th>
+                                <th className="px-6 py-4 font-medium text-right text-black">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 bg-white">
@@ -212,7 +212,7 @@ function MembersContent() {
                                 filteredMembers.map((member, i) => (
                                     <tr key={member.id || String(i)} className="hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <div className="font-semibold text-gray-900">{member.name}</div>
+                                            <div className="font-semibold text-black">{member.name}</div>
                                             <div className="text-gray-500 mt-0.5 text-xs flex flex-col gap-1">
                                                 <span>{member.email}</span>
                                                 {member.phone_number && <span>{member.phone_number}</span>}
