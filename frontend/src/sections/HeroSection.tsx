@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Container } from "@/components/layout/Container";
@@ -26,6 +26,14 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, []);
 
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
   return (
     <section className="relative h-screen flex items-center justify-center text-foreground overflow-hidden">
       {/* Animated Background Slider */}
@@ -33,9 +41,9 @@ export default function HeroSection() {
         <AnimatePresence initial={false}>
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "-100%" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
           >
@@ -50,61 +58,80 @@ export default function HeroSection() {
         </AnimatePresence>
       </div>
 
-      {/* Modern Gradient Overlay */}
-      <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px]"></div>
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-background/20 to-background"></div>
+      {/* Dark Overlay for Text Readability */}
+      <div className="absolute inset-0 z-0 bg-black/40"></div>
 
       {/* Content */}
       <Container className="text-center relative z-10">
         <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl font-serif font-extrabold mb-6 tracking-tight text-white drop-shadow-lg"
+          className="text-5xl md:text-7xl lg:text-8xl font-black mb-4 tracking-tight text-white drop-shadow-lg"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 1, delay: 0.3 }}
         >
-          Reconnect. Remember. Rise Together.
+          Sahara <br className="hidden md:block" /> Connect
         </motion.h1>
 
         <motion.p
-          className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-md"
+          className="text-lg md:text-xl text-white/90 mb-12 drop-shadow-md"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.8 }}
+          transition={{ duration: 1, delay: 0.6 }}
         >
-          Sahara Connect brings together everyone who once called Sahara home — building lifelong friendships and opportunities.
+          Building lifelong connections
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.1 }}
+          transition={{ duration: 1, delay: 0.9 }}
         >
           <Button
             size="lg"
-            className="rounded-full shadow-xl px-8 py-6 text-lg transform hover:scale-105 transition-all duration-300"
+            className="rounded-full shadow-xl px-8 py-6 text-lg transform hover:scale-105 transition-all duration-300 bg-white/20 border-2 border-white text-white hover:bg-white hover:text-foreground"
           >
-            Join the Network
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="bg-background/50 backdrop-blur-sm border-2 border-primary/20 hover:bg-primary hover:text-primary-foreground px-8 py-6 text-lg rounded-full transform hover:scale-105 transition-all duration-300"
-          >
-            Explore Batches
+            Join Us
           </Button>
         </motion.div>
       </Container>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <ChevronDown className="w-8 h-8 text-white/60" />
-      </motion.div>
+      {/* Carousel Controls */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 flex items-center gap-6">
+        {/* Left Arrow */}
+        <button
+          onClick={goToPrevious}
+          className="text-white hover:text-white/70 transition"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+
+        {/* Dots Indicator */}
+        <div className="flex gap-2">
+          {images.map((_, index) => (
+            <motion.button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === currentIndex ? "bg-white" : "bg-white/40"
+              }`}
+              animate={{
+                width: index === currentIndex ? "24px" : "8px",
+              }}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Right Arrow */}
+        <button
+          onClick={goToNext}
+          className="text-white hover:text-white/70 transition"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
     </section>
   );
 }

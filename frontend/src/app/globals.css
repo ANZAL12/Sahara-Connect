@@ -1,36 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  /* Premium Sahara Theme - Warm Sands and Deep Typography */
-  --background: 250 249 246; /* Off-white Sand */
-  --foreground: 22 24 29; /* Refined Dark Navy/Grey */
-  
-  --card: 255 255 255; /* Pure White */
-  --card-foreground: 22 24 29;
-  
+  /* Clean White Professional Theme */
+  --background: 255 255 255; /* Pure White */
+  --foreground: 15 23 42; /* Slate-900 — crisp dark text */
+
+  --card: 255 255 255; /* White cards */
+  --card-foreground: 15 23 42;
+
   --popover: 255 255 255;
-  --popover-foreground: 22 24 29;
-  
-  /* Sahara Primary Gold/Sand */
-  --primary: 38 41 46; /* Deep architectural grey for primary buttons */
-  --primary-foreground: 250 249 246; 
-  
-  --secondary: 242 240 235; /* Slightly darker sand */
-  --secondary-foreground: 38 41 46;
-  
-  --muted: 242 240 235;
-  --muted-foreground: 107 114 128; /* Cool gray */
-  
-  /* Sahara Accent - Warm Gold/Amber for highlights */
-  --accent: 217 119 6; /* Amber-600 */
+  --popover-foreground: 15 23 42;
+
+  /* Deep Navy Primary — professional and authoritative */
+  --primary: 15 23 42; /* Slate-900 */
+  --primary-foreground: 255 255 255;
+
+  --secondary: 248 250 252; /* Slate-50 — barely-there grey */
+  --secondary-foreground: 15 23 42;
+
+  --muted: 241 245 249; /* Slate-100 */
+  --muted-foreground: 100 116 139; /* Slate-500 */
+
+  /* Refined Blue Accent */
+  --accent: 37 99 235; /* Blue-600 — professional pop of colour */
   --accent-foreground: 255 255 255;
-  
-  --destructive: 220 38 38; /* Red-600 */
+
+  --destructive: 220 38 38;
   --destructive-foreground: 255 255 255;
-  
-  --border: 229 225 216; /* Sand border */
-  --input: 229 225 216;
-  --ring: 38 41 46;
+
+  --border: 226 232 240; /* Slate-200 — subtle, clean borders */
+  --input: 226 232 240;
+  --ring: 37 99 235; /* Blue focus ring */
 
   --radius: 0.75rem;
 }
@@ -59,39 +59,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Deep sleek dark mode */
-    --background: 14 16 20; /* Deep blue-tinted black */
-    --foreground: 242 240 235; /* Soft Sand */
-    
-    --card: 22 24 29; /* Raised dark grey */
-    --card-foreground: 242 240 235;
-    
-    --popover: 22 24 29;
-    --popover-foreground: 242 240 235;
-    
-    --primary: 242 240 235; /* Sand text on dark */
-    --primary-foreground: 14 16 20; 
-    
-    --secondary: 31 34 40;
-    --secondary-foreground: 242 240 235;
-    
-    --muted: 31 34 40;
-    --muted-foreground: 156 163 175; /* Gray-400 */
-    
-    --accent: 245 158 11; /* Amber-500 */
-    --accent-foreground: 14 16 20;
-    
-    --destructive: 239 68 68; /* Red-500 */
-    --destructive-foreground: 255 255 255;
-    
-    --border: 38 41 46;
-    --input: 38 41 46;
-    --ring: 242 240 235;
-  }
-}
-
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
@@ -103,16 +70,16 @@ body {
 /* Glassmorphism Utilities */
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(226, 232, 240, 0.6);
   }
-  
+
   .glass-dark {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 }

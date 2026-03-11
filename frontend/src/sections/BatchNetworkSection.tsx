@@ -101,11 +101,11 @@ export default function BatchNetworkSection() {
                 </div>
 
                 {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${batch.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                <div className={`absolute inset-0 bg-linear-to-br ${batch.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 
                 <CardHeader className="text-center pb-4 relative z-10">
                   <motion.div
-                    className={`w-20 h-20 bg-gradient-to-br ${batch.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}
+                    className={`w-20 h-20 bg-linear-to-br ${batch.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.6 }}
                   >
@@ -154,7 +154,7 @@ export default function BatchNetworkSection() {
 
                   <Button
                     size="sm"
-                    className={`w-full bg-gradient-to-r ${batch.color} hover:opacity-90 text-primary-foreground font-semibold rounded-full group-hover:scale-[1.02] transition-all duration-300`}
+                    className={`w-full bg-linear-to-r ${batch.color} hover:opacity-90 text-primary-foreground font-semibold rounded-full group-hover:scale-[1.02] transition-all duration-300`}
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Connect

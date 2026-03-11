@@ -1,117 +1,87 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase } from "lucide-react";
+import { motion } from "framer-motion"
+import Image from "next/image"
 
-import { Section } from "@/components/layout/Section";
-import { Container } from "@/components/layout/Container";
+interface Alumni {
+  name: string
+  role: string
+  image: string
+  batch: string
+}
 
-const alumni = [
-  {
-    name: "Rahul Sharma",
-    role: "Senior Software Engineer",
-    company: "Google",
-    location: "Bangalore, India",
-    image: "/memories/Acer_Wallpaper_01_3840x2400.jpg",
-    batch: "2015",
-  },
-  {
-    name: "Priya Patel",
-    role: "Product Manager",
-    company: "Microsoft",
-    location: "Seattle, USA",
-    image: "/memories/Acer_Wallpaper_02_3840x2400.jpg",
-    batch: "2016",
-  },
-  {
-    name: "Arun Kumar",
-    role: "Entrepreneur",
-    company: "TechStart Inc.",
-    location: "Mumbai, India",
-    image: "/memories/Acer_Wallpaper_03_3840x2400.jpg",
-    batch: "2017",
-  },
-  {
-    name: "Sneha Reddy",
-    role: "Data Scientist",
-    company: "Amazon",
-    location: "New York, USA",
-    image: "/memories/Acer_Wallpaper_04_3840x2400.jpg",
-    batch: "2018",
-  },
-];
+const COLS = 5
 
-export default function AlumniSpotlightSection() {
+export default function AlumniSpotlightSection({ alumni = [] }: { alumni: Alumni[] }) {
+
   return (
-    <Section className="bg-secondary/30 border-y border-border">
-      <Container>
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+    <section className="relative py-24 bg-black overflow-hidden">
+
+      <div className="max-w-7xl mx-auto relative">
+
+        {/* GRID */}
+        <div
+          className="grid gap-[2px]"
+          style={{
+            gridTemplateColumns: `repeat(${COLS}, 1fr)`
+          }}
         >
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
-            Alumni <span className="text-primary tracking-tight">Spotlight</span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Meet some of our remarkable alumni who are making waves in their fields.
-            Their journeys inspire us all to reach greater heights.
-          </p>
-        </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {alumni.map((person, index) => (
+          {alumni.map((profile, index) => (
+
             <motion.div
-              key={person.name}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
+              key={`${profile.name}-${index}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="aspect-square relative overflow-hidden group"
             >
-              <Card className="group hover:shadow-2xl transition-all duration-500 border border-border shadow-md bg-card overflow-hidden h-full">
-                <div className="relative h-48 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
-                  <img
-                    src={person.image}
-                    alt={person.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-primary text-primary-foreground font-semibold shadow-sm">
-                      Batch {person.batch}
-                    </Badge>
-                  </div>
-                </div>
 
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-serif font-bold text-foreground mb-2">
-                    {person.name}
-                  </h3>
+              <Image
+                src={profile.image}
+                alt={profile.name}
+                fill
+                className="object-cover group-hover:scale-110 transition duration-700"
+              />
 
-                  <div className="space-y-2 text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-primary" />
-                      <span className="font-semibold text-foreground/90">{person.role}</span>
-                    </div>
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col justify-center items-center text-center p-3">
 
-                    <div className="text-sm font-medium text-primary">
-                      {person.company}
-                    </div>
+                <p className="text-white text-sm font-bold">
+                  {profile.name}
+                </p>
 
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4" />
-                      <span>{person.location}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                <p className="text-white/70 text-xs">
+                  {profile.role}
+                </p>
+
+                <p className="text-white/50 text-xs">
+                  Batch {profile.batch}
+                </p>
+
+              </div>
+
             </motion.div>
+
           ))}
+
         </div>
-      </Container>
-    </Section>
-  );
+
+        {/* TEXT OVERLAY */}
+        <div className="pointer-events-none absolute left-10 top-1/3">
+
+          <h2 className="text-white font-black text-6xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
+
+            This<br/>
+            is<br/>
+            Us
+
+          </h2>
+
+        </div>
+
+      </div>
+
+    </section>
+  )
 }
