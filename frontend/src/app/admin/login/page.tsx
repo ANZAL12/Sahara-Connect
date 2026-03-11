@@ -46,10 +46,6 @@ export default function AdminLogin() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 relative">
-            <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-                Back to Site
-            </Link>
 
             <Card className="w-full max-w-md shadow-2xl border-0 overflow-hidden bg-white/80 backdrop-blur-xl">
                 <div className="h-2 bg-gradient-to-r from-gray-900 via-gray-700 to-black w-full" />

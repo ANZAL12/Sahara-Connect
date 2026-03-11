@@ -89,7 +89,7 @@ const formatDisplayTime = (timeStr?: string) => {
   return timeStr;
 };
 
-const TABS = ["All", "Sahara Fest", "Other Events"];
+const TABS = ["All", "Sahara Fest"];
 
 /* ── Component ─────────────────────────────────────────── */
 
@@ -315,107 +315,6 @@ export default function EventsPage() {
               </motion.div>
             )}
 
-            {/* ── Other Events Section ── */}
-            {(activeTab === "All" || activeTab === "Other Events") && (
-              <motion.div
-                key="other"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                {otherEventsList.length > 0 && (
-                  <>
-                    <h2 className="text-3xl font-serif font-bold text-foreground mb-8 flex items-center gap-2">
-                      <Calendar className="w-6 h-6 text-primary" /> Upcoming
-                      Community Events
-                    </h2>
-
-                    <div className="space-y-6">
-                      {otherEventsList.map((event, i) => (
-                        <motion.div
-                          key={event.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.5, delay: i * 0.1 }}
-                          viewport={{ once: true }}
-                        >
-                          <Card className="group border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all duration-500">
-                            <CardContent className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
-                              {/* Date Block */}
-                              <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-center order-2 md:order-1">
-                                <span className="text-2xl font-bold leading-none">
-                                  {formatDisplayDate(event.date).day}
-                                </span>
-                                <span className="text-xs font-medium uppercase mt-1">
-                                  {formatDisplayDate(event.date).month}
-                                </span>
-                              </div>
-
-                              {/* Event Image (Small Square/Portrait for Community Events) */}
-                              {event.image_url && (
-                                <div className="flex-shrink-0 w-full md:w-32 aspect-[16/10] rounded-xl overflow-hidden shadow-sm order-1 md:order-2">
-                                  <img
-                                    src={event.image_url}
-                                    alt={event.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                  />
-                                </div>
-                              )}
-
-
-                              {/* Details */}
-                              <div className="flex-grow order-3">
-
-                                <div className="flex flex-wrap items-center gap-2 mb-1">
-                                  <h4 className="text-xl font-bold text-foreground">
-                                    {event.title}
-                                  </h4>
-                                  {event.category && (
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-xs font-medium"
-                                    >
-                                      {event.category}
-                                    </Badge>
-                                  )}
-                                </div>
-                                {event.description && (
-                                  <p className="text-sm text-muted-foreground mb-3">
-                                    {event.description}
-                                  </p>
-                                )}
-                                <div className="flex flex-wrap gap-4 text-xs">
-                                  {event.time && (
-                                    <span className="flex items-center gap-1 font-medium text-foreground">
-                                      <Clock className="w-3.5 h-3.5 text-primary flex-shrink-0" /> {formatDisplayTime(event.time)}
-                                    </span>
-                                  )}
-                                  {event.venue && (
-                                    <span className="flex items-center gap-1 font-medium text-foreground">
-                                      <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />{" "}
-                                      {event.venue}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* CTA */}
-                              <Button
-                                variant="outline"
-                                className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
-                              >
-                                Details <ArrowRight className="w-4 h-4 ml-1" />
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            )}
           </AnimatePresence>
         </Container>
       </Section>

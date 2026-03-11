@@ -7,9 +7,10 @@ import { Menu, X } from "lucide-react";
 import { Container } from "./layout/Container";
 
 const NAV_LINKS = [
-  { name: "About", href: "/about" },
-  { name: "Events", href: "/events" },
   { name: "Alumni", href: "/alumni" },
+  { name: "Events", href: "/events" },
+  { name: "About", href: "/about" },
+  { name: "Admin", href: "/admin/login" },
 ];
 
 export default function Navbar() {

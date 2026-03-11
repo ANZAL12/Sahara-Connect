@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -86,12 +87,14 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.9 }}
         >
-          <Button
-            size="lg"
-            className="rounded-full shadow-xl px-8 py-6 text-lg transform hover:scale-105 transition-all duration-300 bg-white/20 border-2 border-white text-white hover:bg-white hover:text-foreground"
-          >
-            Join Us
-          </Button>
+          <Link href="/batches/join">
+            <Button
+              size="lg"
+              className="rounded-full shadow-xl px-8 py-6 text-lg transform hover:scale-105 transition-all duration-300 bg-white/20 border-2 border-white text-white hover:bg-white hover:text-foreground"
+            >
+              Join Us
+            </Button>
+          </Link>
         </motion.div>
       </Container>
 

@@ -241,8 +241,9 @@ export default function BatchNetworkSection() {
             </motion.div>
           ))}
         </div>
+      )}
 
-        {/* Bottom CTA */}
+      {/* Bottom CTA */}
         <motion.div
           className="text-center mt-16"
           initial={{ opacity: 0, y: 30 }}
