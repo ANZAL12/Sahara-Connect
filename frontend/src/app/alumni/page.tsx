@@ -1,38 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  MapPin,
-  Briefcase,
-  Linkedin,
-  GraduationCap,
-  Camera,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Upload,
-  ImageIcon,
-} from "lucide-react";
+import { MapPin, Briefcase, Linkedin, Camera, Upload, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
 
-// ── Mock Data ────────────────────────────────────────────
+// Type definitions
+interface Alumnus {
+  id: number;
+  name: string;
+  role: string;
+  company: string;
+  location: string;
+  image: string;
+  batch: string;
+  linkedin: string;
+}
 
-const ALL_ALUMNI = [
+interface GalleryPhoto {
+  id: number;
+  src: string;
+  caption: string;
+}
+
+// Mock Data for Alumni (to be replaced with DB fetch later)
+const ALL_ALUMNI: Alumnus[] = [
   {
     id: 1,
     name: "Rahul Sharma",
     role: "Senior Software Engineer",
     company: "Google",
-    dept: "Computer Science",
     location: "Bangalore, India",
-    image: "/profiles/pexels-pixabay-415829.jpg",
+    image: "/memories/Acer_Wallpaper_01_3840x2400.jpg",
     batch: "2015",
     linkedin: "https://linkedin.com",
   },
@@ -41,9 +46,8 @@ const ALL_ALUMNI = [
     name: "Priya Patel",
     role: "Product Manager",
     company: "Microsoft",
-    dept: "Information Technology",
     location: "Seattle, USA",
-    image: "/profiles/pexels-luisbecerrafotografo-5906433.jpg",
+    image: "/memories/Acer_Wallpaper_02_3840x2400.jpg",
     batch: "2016",
     linkedin: "https://linkedin.com",
   },
@@ -52,9 +56,8 @@ const ALL_ALUMNI = [
     name: "Arun Kumar",
     role: "Entrepreneur",
     company: "TechStart Inc.",
-    dept: "Mechanical Engineering",
     location: "Mumbai, India",
-    image: "/profiles/pexels-luisbecerrafotografo-5906261.jpg",
+    image: "/memories/Acer_Wallpaper_03_3840x2400.jpg",
     batch: "2017",
     linkedin: "https://linkedin.com",
   },
@@ -63,9 +66,8 @@ const ALL_ALUMNI = [
     name: "Sneha Reddy",
     role: "Data Scientist",
     company: "Amazon",
-    dept: "Electronics & Communication",
     location: "New York, USA",
-    image: "/profiles/pexels-linkedin-2182970.jpg",
+    image: "/memories/Acer_Wallpaper_04_3840x2400.jpg",
     batch: "2018",
     linkedin: "https://linkedin.com",
   },
@@ -74,9 +76,8 @@ const ALL_ALUMNI = [
     name: "Karan Desai",
     role: "UX Designer",
     company: "Apple",
-    dept: "Computer Science",
     location: "London, UK",
-    image: "/profiles/pexels-kindelmedia-7298855.jpg",
+    image: "/memories/Acer_Wallpaper_05_3840x2400.jpg",
     batch: "2016",
     linkedin: "https://linkedin.com",
   },
@@ -85,31 +86,8 @@ const ALL_ALUMNI = [
     name: "Aisha Khan",
     role: "Marketing Director",
     company: "Netflix",
-    dept: "Business Administration",
     location: "Singapore",
-    image: "/profiles/pexels-dziana-hasanbekava-7275385.jpg",
-    batch: "2018",
-    linkedin: "https://linkedin.com",
-  },
-   {
-    id: 6,
-    name: "Aisha Khan",
-    role: "Marketing Director",
-    company: "Netflix",
-    dept: "Business Administration",
-    location: "Singapore",
-    image: "/profiles/pexels-dziana-hasanbekava-7275385.jpg",
-    batch: "2018",
-    linkedin: "https://linkedin.com",
-  },
-   {
-    id: 6,
-    name: "Aisha Khan",
-    role: "Marketing Director",
-    company: "Netflix",
-    dept: "Business Administration",
-    location: "Singapore",
-    image: "/profiles/pexels-simon-robben-55958-614810.jpg",
+    image: "/memories/Acer_Wallpaper_01_3840x2400.jpg",
     batch: "2018",
     linkedin: "https://linkedin.com",
   },
@@ -117,56 +95,81 @@ const ALL_ALUMNI = [
 
 const BATCHES = ["All", "2015", "2016", "2017", "2018"];
 
-// Mock gallery photos per batch
-const BATCH_GALLERY: Record<string, { id: number; src: string; caption: string }[]> = {
+const BATCH_GALLERY: Record<string, GalleryPhoto[]> = {
   "2015": [
-    { id: 1, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Farewell Day 2015" },
-    { id: 2, src: "/memories/Acer_Wallpaper_03_3840x2400.jpg", caption: "Annual Sports Meet" },
-    { id: 3, src: "/memories/Acer_Wallpaper_05_3840x2400.jpg", caption: "Cultural Night" },
-    { id: 4, src: "/memories/Acer_Wallpaper_02_3840x2400.jpg", caption: "Graduation Ceremony" },
+    { id: 1, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Batch 2015 Graduation" },
+    { id: 2, src: "/memories/Acer_Wallpaper_02_3840x2400.jpg", caption: "Class Photo" },
   ],
   "2016": [
-    { id: 1, src: "/memories/Acer_Wallpaper_02_3840x2400.jpg", caption: "College Trip - Goa" },
-    { id: 2, src: "/memories/Acer_Wallpaper_04_3840x2400.jpg", caption: "Hackathon Winners" },
-    { id: 3, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Fresher Party" },
-    { id: 4, src: "/memories/Acer_Wallpaper_03_3840x2400.jpg", caption: "Farewell 2016" },
-    { id: 5, src: "/memories/Acer_Wallpaper_05_3840x2400.jpg", caption: "Lab Days" },
+    { id: 3, src: "/memories/Acer_Wallpaper_03_3840x2400.jpg", caption: "Annual Fest" },
+    { id: 4, src: "/memories/Acer_Wallpaper_04_3840x2400.jpg", caption: "Sports Day" },
   ],
   "2017": [
-    { id: 1, src: "/memories/Acer_Wallpaper_03_3840x2400.jpg", caption: "Batch Reunion" },
-    { id: 2, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Project Exhibition" },
-    { id: 3, src: "/memories/Acer_Wallpaper_04_3840x2400.jpg", caption: "Canteen Memories" },
+    { id: 5, src: "/memories/Acer_Wallpaper_05_3840x2400.jpg", caption: "Cultural Event" },
   ],
   "2018": [
-    { id: 1, src: "/memories/Acer_Wallpaper_04_3840x2400.jpg", caption: "Last Day at Campus" },
-    { id: 2, src: "/memories/Acer_Wallpaper_02_3840x2400.jpg", caption: "Tech Fest 2018" },
-    { id: 3, src: "/memories/Acer_Wallpaper_05_3840x2400.jpg", caption: "Class Photo" },
-    { id: 4, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Annual Day" },
-    { id: 5, src: "/memories/Acer_Wallpaper_03_3840x2400.jpg", caption: "Field Trip" },
-    { id: 6, src: "/memories/Acer_Wallpaper_04_3840x2400.jpg", caption: "Graduation Smiles" },
+    { id: 6, src: "/memories/Acer_Wallpaper_01_3840x2400.jpg", caption: "Farewell Party" },
   ],
 };
 
-// Masonry row-span pattern for visual variety
 const SPAN_PATTERN = [
-  "row-span-2",
   "row-span-1",
+  "row-span-2",
   "row-span-1",
   "row-span-1",
   "row-span-2",
   "row-span-1",
 ];
+    company: "Amazon",
+    location: "New York, USA",
+    image: "/memories/Acer_Wallpaper_04_3840x2400.jpg",
+    batch: "2018",
+    linkedin: "https://linkedin.com",
+  },
+  {
+    id: 5,
+    name: "Karan Desai",
+    role: "UX Designer",
+    company: "Apple",
+    location: "London, UK",
+    image: "/memories/Acer_Wallpaper_05_3840x2400.jpg",
+    batch: "2016",
+    linkedin: "https://linkedin.com",
+  },
+  {
+    id: 6,
+    name: "Aisha Khan",
+    role: "Marketing Director",
+    company: "Netflix",
+    location: "Singapore",
+    image: "/memories/Acer_Wallpaper_01_3840x2400.jpg",
+    batch: "2018",
+    linkedin: "https://linkedin.com",
+  },
+];
 
-// ── Component ────────────────────────────────────────────
+const BATCHES = ["All", "2015", "2016", "2017", "2018"];
 
 export default function AlumniDirectoryPage() {
+  const [alumni, setAlumni] = useState<Alumnus[]>([]);
+  const [batches, setBatches] = useState<string[]>(["All"]);
   const [selectedBatch, setSelectedBatch] = useState("All");
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const filteredAlumni =
     selectedBatch === "All"
-      ? ALL_ALUMNI
-      : ALL_ALUMNI.filter((alumnus) => alumnus.batch === selectedBatch);
+      ? alumni
+      : alumni.filter((alumnus) => alumnus.batch === selectedBatch);
+
+  // Grouping logic for "All" view
+  const groupedAlumni = filteredAlumni.reduce((acc, person) => {
+    const batch = person.batch || "Unknown";
+    if (!acc[batch]) acc[batch] = [];
+    acc[batch].push(person);
+    return acc;
+  }, {} as Record<string, Alumnus[]>);
+
+  // Sort batches for display (descending)
+  const sortedBatchKeys = Object.keys(groupedAlumni).sort((a, b) => b.localeCompare(a));
 
   const galleryPhotos =
     selectedBatch !== "All" ? BATCH_GALLERY[selectedBatch] ?? [] : [];
@@ -203,7 +206,7 @@ export default function AlumniDirectoryPage() {
         </motion.div>
 
         {/* Batch Filter Tabs */}
-        <motion.div
+        <motion.div 
           className="flex flex-wrap justify-center gap-3 mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,14 +217,11 @@ export default function AlumniDirectoryPage() {
               key={batch}
               variant={selectedBatch === batch ? "default" : "outline"}
               className={`rounded-full px-6 transition-all duration-300 ${
-                selectedBatch === batch
-                  ? "bg-primary text-primary-foreground shadow-md"
+                selectedBatch === batch 
+                  ? "bg-primary text-primary-foreground shadow-md" 
                   : "border-border text-foreground hover:border-primary hover:text-primary"
               }`}
-              onClick={() => {
-                setSelectedBatch(batch);
-                setLightboxIndex(null);
-              }}
+              onClick={() => setSelectedBatch(batch)}
             >
               {batch === "All" ? "All Batches" : `Batch of ${batch}`}
             </Button>
@@ -229,11 +229,11 @@ export default function AlumniDirectoryPage() {
         </motion.div>
 
         {/* Alumni Cards Grid */}
-        <motion.div
+        <motion.div 
           layout
           className={`grid gap-6 md:gap-8 ${
-            filteredAlumni.length > 8
-              ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+            filteredAlumni.length > 8 
+              ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6" 
               : filteredAlumni.length > 4
               ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
@@ -264,46 +264,35 @@ export default function AlumniDirectoryPage() {
                     </div>
                   </div>
 
-                  <CardContent className="p-6 flex flex-col grow">
-                    <div className="mb-4 grow">
+                  <CardContent className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4 flex-grow">
                       <h3 className="text-2xl font-serif font-bold text-foreground mb-1">
                         {person.name}
                       </h3>
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                        <span>{person.dept}</span>
-                      </div>
 
                       <div className="space-y-2 mt-4 text-muted-foreground">
                         <div className="flex items-start gap-2">
                           <Briefcase className="w-4 h-4 text-primary mt-1 shrink-0" />
                           <div>
-                            <span className="font-semibold text-foreground block leading-tight">
-                              {person.role}
-                            </span>
-                            <span className="text-sm font-medium text-primary block mt-0.5">
-                              {person.company}
-                            </span>
+                            <span className="font-semibold text-foreground block leading-tight">{person.role}</span>
+                            <span className="text-sm font-medium text-primary block mt-0.5">{person.company}</span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm pt-1">
-                          <MapPin className="w-4 h-4 shrink-0 text-muted-foreground" />
-                          <span>{person.location}</span>
-                        </div>
-                      </div>
-                    </div>
+                                {person.country && (
+                                  <div className="flex items-center gap-2 text-sm pt-1">
+                                    <MapPin className="w-4 h-4 shrink-0 text-muted-foreground" />
+                                    <span>{person.country}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
 
-                    <Button
+                    <Button 
                       className="w-full mt-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300"
                       asChild
                     >
-                      <a
-                        href={person.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2"
-                      >
+                      <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
                         <Linkedin className="w-4 h-4" />
                         Connect
                       </a>
@@ -316,14 +305,16 @@ export default function AlumniDirectoryPage() {
         </motion.div>
 
         {/* Empty State */}
-        {filteredAlumni.length === 0 && (
+        {!loading && filteredAlumni.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
             <p className="text-2xl text-muted-foreground font-serif">
-              No alumni found for this batch yet.
+              {selectedBatch === "All" 
+                ? "No alumni found in the directory yet." 
+                : `No alumni found for Batch of ${selectedBatch} yet.`}
             </p>
           </motion.div>
         )}
