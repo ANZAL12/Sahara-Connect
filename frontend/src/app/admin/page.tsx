@@ -58,7 +58,6 @@ export default function AdminDashboard() {
     }, []);
 
     return (
-    return (
         <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
             <div>
                 <h1 className="text-4xl font-bold font-serif text-black tracking-tight">Dashboard Overview</h1>
