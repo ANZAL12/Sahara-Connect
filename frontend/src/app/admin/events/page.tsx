@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Loader2, CalendarDays, Search, Plus, Edit, Sparkles } from "lucide-react";
+import { Trash2, Loader2, CalendarDays, Search, Plus, Edit, Sparkles, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
@@ -181,6 +181,17 @@ export default function EventsManagement() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
+                                                <Link href={`/admin/registrations?event=${event.id}`}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 h-8 px-2"
+                                                        title="View Registrations"
+                                                    >
+                                                        <ClipboardList className="w-4 h-4 mr-1.5" />
+                                                        Registrations
+                                                    </Button>
+                                                </Link>
                                                 <Link href={`/admin/events/${event.id}`}>
                                                     <Button
                                                         variant="ghost"

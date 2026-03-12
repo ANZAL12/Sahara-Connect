@@ -6,12 +6,13 @@ import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ArrowLeft, Save, Sparkles, Image as ImageIcon } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Sparkles, Image as ImageIcon, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { EventFormBuilder, FormField } from "@/components/admin/EventFormBuilder";
 
 
 export default function NewEventPage() {
@@ -29,7 +30,9 @@ export default function NewEventPage() {
         category: "",
         type: "Other Events",
         image_url: "",
-        is_featured: false
+        is_featured: false,
+        is_registration_enabled: true,
+        registration_form: [] as FormField[]
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -202,6 +205,35 @@ export default function NewEventPage() {
                                     Feature this event (Hero section for Sahara Fest)
                                 </Label>
                             </div>
+
+                            <div className="flex items-center justify-between p-4 bg-purple-50/50 rounded-2xl border border-purple-100 md:col-span-2 mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-purple-100 rounded-lg">
+                                        <ClipboardList className="w-5 h-5 text-purple-600" />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="is_registration_enabled" className="text-base font-bold text-gray-900 cursor-pointer">
+                                            Enable Registration
+                                        </Label>
+                                        <p className="text-xs text-purple-600 font-medium">Allow candidates to sign up for this event</p>
+                                    </div>
+                                </div>
+                                <Switch
+                                    id="is_registration_enabled"
+                                    checked={formData.is_registration_enabled}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, is_registration_enabled: checked })}
+                                    className="data-[state=checked]:bg-purple-600"
+                                />
+                            </div>
+
+                            {formData.is_registration_enabled && (
+                                <div className="md:col-span-2 pt-6 border-t border-gray-100">
+                                    <EventFormBuilder
+                                        value={formData.registration_form}
+                                        onChange={(form) => setFormData({ ...formData, registration_form: form })}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-6 border-t border-gray-50 flex gap-4">
