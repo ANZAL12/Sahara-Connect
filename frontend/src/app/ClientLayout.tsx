@@ -7,9 +7,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const pathname = usePathname();
     const isAdminRoute = pathname?.startsWith("/admin");
 
+    const isAdminDashboard = pathname?.startsWith("/admin") && pathname !== "/admin/login";
+
     return (
         <>
-            <Navbar />
+            {!isAdminDashboard && <Navbar />}
             {children}
         </>
     );

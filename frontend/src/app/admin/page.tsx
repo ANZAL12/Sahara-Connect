@@ -58,7 +58,8 @@ export default function AdminDashboard() {
     }, []);
 
     return (
-        <div className="pt-32 p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
+    return (
+        <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
             <div>
                 <h1 className="text-4xl font-bold font-serif text-black tracking-tight">Dashboard Overview</h1>
                 <p className="text-lg text-gray-500 mt-2 font-medium">Welcome back. Here is what is happening across Sahara Connect.</p>
